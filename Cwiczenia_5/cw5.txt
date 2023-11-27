@@ -1,0 +1,21 @@
+BAZY DANYCH CW5
+
+1. 
+id_klienta -> nazwa_klienta 
+id_produktu-> nazwa_produktu, cena_produktu, vat
+(cena_produktu, vat)-> cena_brutto, cena_netto
+(data_zamowienia, id_produktu, id_klienta)->ilosc //dla jednego klienta, jeden typ produktu, w konkretnym dniu 
+
+2.
+klucze kandydujące: 
+wartości w kluczu kandydującym muszą być unikalne w obrębie tabeli i  nie można usunąć żadnego atrybutu z klucza, jednocześnie zachowując unikalność.
+id_produktu, id_klienta, data_zamowienia 
+- wtedy będzie unikalny, okreslajac te 3 atrybuty, wiadomo jakie wartosci beda miec pozostale 
+
+3.
+pomieszczenia(id_pomieszczenia,nr_pomieszczenia, id_budynku, powierzchnia, liczba_okien, liczba_drzwi, ulica, miasto, kod_pocztowy)
+id_pomieszczenia - unikalny identyfikator, autoinkrementowany 
+
+(miasto, ulica, kod_pocztowy) -> id_budynku  // chyba ze ulica nie zawiera numeru budynku, bo moze byc kilka na jednej ulicy
+id_pomieszczenia -> nr_pomieszczenia, id_budynku, powierzchnia, liczba_okien, liczba_drzwi, ulica, miasto, kod-pocztowy 
+ klucz kandydujący: id_pomieszczenia 
