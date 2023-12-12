@@ -1,0 +1,78 @@
+cw7
+
+CREATE OR REPLACE FUNCTION fibb(n INT)
+RETURNS INT AS $$
+DECLARE
+  result INT;
+BEGIN
+  IF n = 0 THEN
+    RETURN 0;
+  ELSIF n = 1 THEN
+    RETURN 1;
+  ELSE
+    result := fibb(n - 1) + fibb(n - 2);
+    RETURN result;
+  END IF;
+END;
+$$ LANGUAGE plpgsql;
+SELECT fibb(7)
+
+
+--PROCEDURA
+CREATE OR REPLACE PROCEDURE print_fibb(n INT)
+LANGUAGE plpgsql AS $$
+DECLARE
+  result INT;
+BEGIN
+  -- Wywołaj funkcję fibb, aby uzyskać n-ty element ciągu Fibonacciego
+  result := fibb(n);
+  -- Wypisz wynik na konsolę
+  RAISE NOTICE 'Liczba Fibonacciego dla %: %', n, result;
+END;
+$$;
+
+CALL print_fibb(7)
+
+zad.2
+
+CREATE OR REPLACE FUNCTION uppercase_lastname()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.LastName := UPPER(NEW.LastName);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER UpperCaseNazwisko
+BEFORE INSERT OR UPDATE
+ON person.person
+FOR EACH ROW
+EXECUTE FUNCTION uppercase_lastname();
+
+zad.3
+CREATE OR REPLACE FUNCTION tax_rate_monitoring()
+RETURNS TRIGGER AS $$
+DECLARE
+    old_tax_rate numeric;
+    new_tax_rate numeric;
+BEGIN
+    old_tax_rate := COALESCE(OLD.TaxRate, 0);
+    new_tax_rate := COALESCE(NEW.TaxRate, 0);
+
+    IF ABS(new_tax_rate - old_tax_rate) > 0.3 * old_tax_rate 
+	THEN
+        RAISE EXCEPTION 'Zmiana w polu TaxRate przekracza 30%%. Stara wartość: %, Nowa wartość: %', old_tax_rate, new_tax_rate;
+
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER taxRateMonitoring
+BEFORE UPDATE
+ON sales.salestaxrate
+FOR EACH ROW
+EXECUTE FUNCTION tax_rate_monitoring();
+
+---
