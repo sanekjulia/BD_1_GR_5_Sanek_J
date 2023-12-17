@@ -1,0 +1,57 @@
+--cw8
+--zad1
+
+CREATE TABLE TempEmployeeInfo (
+BusinessEntityID INT,
+FirstName varchar(50),
+LastName varchar(50), 
+MaxSalary INT
+);
+
+WITH MaxSalaryCTE AS (
+    SELECT
+        p.BusinessEntityID,
+        p.FirstName,
+        p.LastName,
+        MAX(s.Rate) AS MaxSalary
+    FROM
+        Person.Person p
+    JOIN
+        HumanResources.Employee e ON p.BusinessEntityID = e.BusinessEntityID
+    JOIN
+        HumanResources.EmployeePayHistory s ON e.BusinessEntityID = s.BusinessEntityID
+    GROUP BY
+        p.BusinessEntityID, p.FirstName, p.LastName
+)
+
+INSERT INTO TempEmployeeInfo (BusinessEntityID, FirstName, LastName, MaxSalary)
+SELECT
+    BusinessEntityID,
+    FirstName,
+    LastName,
+    MaxSalary
+FROM
+    MaxSalaryCTE;
+
+
+--zad2
+WITH SalespersonCTE AS (
+    SELECT
+        c.CustomerID,
+        c.TerritoryID,
+        p.FirstName || ' ' || p.LastName AS Salespersoninthisteritory
+
+    FROM
+        Sales.Customer c
+    JOIN
+        Sales.SalesPerson sp ON c.TerritoryID = sp.TerritoryID
+    JOIN
+        Person.Person p ON sp.BusinessEntityID = p.BusinessEntityID
+)
+
+SELECT
+    CustomerID,
+    TerritoryID,
+    Salespersoninthisteritory
+FROM
+    SalespersonCTE;
