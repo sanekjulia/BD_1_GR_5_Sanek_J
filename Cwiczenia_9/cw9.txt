@@ -1,0 +1,38 @@
+--cw9
+EXPLAIN ANALYZE
+SELECT 
+c.customerid, 
+c.personid,
+c.storeid,
+c.territoryid,
+soh.salesorderid, 
+soh.orderdate, 
+soh.duedate, 
+soh.shipdate
+FROM sales.customer c
+INNER JOIN sales.salesorderheader soh ON c.customerid = soh.customerid
+WHERE c.territoryid = 5
+-- ---------------------------
+CREATE INDEX idx_customerid ON sales.customer (customerid);
+CREATE INDEX idx_territoryid ON sales.customer (territoryid);
+CREATE INDEX idx_orderdate ON sales.salesorderheader (orderdate);
+
+--Zad2
+
+BEGIN;
+UPDATE production.product SET listprice = 1.1* listprice
+WHERE production.product.productid = 680;
+COMMIT;
+
+
+BEGIN;
+DELETE FROM production.product
+WHERE production.product.productid = 707;
+ROLLBACK;
+[ERROR:  bieżąca transakcja została przerwana, polecenia ignorowane do końca bloku transakcji]
+
+BEGIN;
+INSERT INTO production.product (productid, name, productnumber) 
+VALUES ('12', 'nowy_produkt', 'AR-5001');
+
+[ERROR:  bieżąca transakcja została przerwana, polecenia ignorowane do końca bloku transakcji]
